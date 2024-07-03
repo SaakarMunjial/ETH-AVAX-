@@ -2,26 +2,33 @@
 pragma solidity ^0.8.17;
 
 contract ErrorHandling {
-    int initBalance = 10000;
+    int public totalFunds = 0;
+    int public balance = 1000;
 
-    function withdraw(int amount) public returns (int) {
+    function contributeFunds(int amount) public returns (int) {
         assert(amount > 0);
+        require(amount < balance, "Fund should be less than your balance");
 
-        if(amount > initBalance){
+        totalFunds += amount;
+        balance -= amount;
+        return totalFunds;
+    }
+
+    function withdrawFunds(int amount) public returns (int) {
+        require(amount > 0, "Withdrawal amount must be greater than 0");
+
+        if(amount > balance){
             revert("Amount must be less than initial balance!");
         }
-        initBalance -= amount;
-        return initBalance;
+
+        balance -= amount;
+        return balance;
     }
 
-    function depositBalance(int amount) public returns (int){
-        require(amount >= 0, "Value should be greater than 0");
-        initBalance += amount;
-        return initBalance;
+    function viewTotalFunds() public view returns (int) {
+        return totalFunds;
     }
-
-    function viewBalance() public view returns(int){
-        return initBalance;
+    function viewTotalBalance() public view returns (int) {
+        return balance;
     }
-
 }
